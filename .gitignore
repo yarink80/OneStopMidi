@@ -1,0 +1,11 @@
+bin/
+obj/
+artifacts/
+dist/
+*.user
+.vs/
+TestResults/
+# Private working notes (not published)
+docs/private/
+# Intermediate output of tools/avatar/make_avatar.py (only the avatar and icon are used)
+src/OneStopMidi.App/Assets/elie-cutout.png

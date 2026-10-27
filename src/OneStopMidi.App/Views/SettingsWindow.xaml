@@ -1,0 +1,172 @@
+<Window x:Class="OneStopMidi.App.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:OneStopMidi.App.Controls"
+        Title="Settings" Width="780" Height="640" MinWidth="620" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <Window.Resources>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,4" />
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="Margin" Value="0,4" />
+        </Style>
+        <Style x:Key="Hint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#666" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,8" />
+        </Style>
+    </Window.Resources>
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="OK" Width="86" IsDefault="True" Click="Ok_Click" Margin="0,0,8,0" />
+            <Button Content="Cancel" Width="86" IsCancel="True" />
+        </StackPanel>
+        <TabControl x:Name="Tabs">
+            <!-- ================================================================ Various -->
+            <TabItem Header="Various">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="14">
+                        <CheckBox x:Name="ChaseBox" Content="Chase events (send program, bank, volume, pan, reverb and chorus on play / continue / seek)" />
+                        <CheckBox x:Name="WarningsBox" Content="Show missing MIDI event warnings after loading a song" />
+                        <CheckBox x:Name="SpacebarBox" Content="Spacebar toggles pause / continue (instead of start / stop)" />
+                        <CheckBox x:Name="TrackNamesBox" Content="Show track names in the mixer (instead of instrument names)" />
+                        <CheckBox x:Name="ClickBox" Content="MIDI click (metronome on channel 10)" />
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Chord display:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="ChordModeBox" Grid.Column="1" Margin="0,3" Width="300" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" Text="Lyrics character set:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="CharsetBox" Grid.Row="1" Grid.Column="1" Margin="0,3" Width="300" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="2" Text="Save format:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="SaveFormatBox" Grid.Row="2" Grid.Column="1" Margin="0,3" Width="300" HorizontalAlignment="Left" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource Hint}" Text="Character set and chord display take effect the next time a song is loaded." />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ================================================================ Music device -->
+            <TabItem Header="Music device">
+                <StackPanel Margin="14">
+                    <TextBlock Style="{StaticResource Hint}"
+                               Text="Choose the MIDI output device for each port. Port A is always used; ports B-D are optional and can be targeted from the MIDI routing page." />
+                    <Grid x:Name="PortsGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <!-- ================================================================ Routing -->
+            <TabItem Header="MIDI routing">
+                <DockPanel Margin="14">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Style="{StaticResource Hint}"
+                                   Text="Route each source channel to an output port and channel. &quot;B9&quot; means port B, channel 9." />
+                        <Button Content="Reset to A1 … A16" HorizontalAlignment="Left" Padding="10,2" Click="ResetRoutes_Click" Margin="0,0,0,8" />
+                    </StackPanel>
+                    <UniformGrid x:Name="RoutesGrid" Columns="2" VerticalAlignment="Top" />
+                </DockPanel>
+            </TabItem>
+
+            <!-- ================================================================ Drum channels -->
+            <TabItem Header="Drum channels">
+                <StackPanel Margin="14">
+                    <TextBlock Style="{StaticResource Hint}" Text="Drum channels are excluded from transposition." />
+                    <UniformGrid x:Name="DrumGrid" Columns="4" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- ================================================================ Keyboard -->
+            <TabItem Header="Keyboard" x:Name="KeyboardTab">
+                <DockPanel Margin="10">
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <TextBlock Text="Preset:" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <ComboBox x:Name="PresetBox" Width="190" SelectionChanged="PresetBox_SelectionChanged" />
+                        <Button Content="Import…" Margin="12,0,0,0" Padding="10,2" Click="ImportKeys_Click" />
+                        <Button Content="Export…" Margin="6,0,0,0" Padding="10,2" Click="ExportKeys_Click" />
+                        <Button Content="Reset all to defaults" Margin="6,0,0,0" Padding="10,2" Click="ResetAllKeys_Click" />
+                        <TextBox x:Name="KeyFilterBox" DockPanel.Dock="Right" Width="150" HorizontalAlignment="Right" Padding="2"
+                                 TextChanged="KeyFilterBox_TextChanged" ToolTip="Filter commands" />
+                        <TextBlock Text="Filter:" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0" />
+                    </DockPanel>
+
+                    <Border DockPanel.Dock="Bottom" BorderBrush="#CCC" BorderThickness="1" Padding="8" Margin="0,8,0,0" CornerRadius="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" x:Name="SelectedActionText" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,4" Text="Select a command" />
+                                <ListBox x:Name="ChordList" Height="84" />
+                            </DockPanel>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                <TextBlock Text="New shortcut (click the box, then press the key — arrows, Enter, NumPad Enter, Space, Esc and Tab are captured):"
+                                           TextWrapping="Wrap" />
+                                <c:KeyCaptureBox x:Name="CaptureBox" Margin="0,4" Padding="4" FontSize="14" ChordCaptured="CaptureBox_ChordCaptured" />
+                                <TextBlock x:Name="ConflictText" Foreground="#B03030" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <Button Content="Add" Width="80" Click="AddChord_Click" Margin="0,0,6,0" />
+                                    <Button Content="Remove selected" Padding="8,2" Click="RemoveChord_Click" Margin="0,0,6,0" />
+                                    <Button Content="Reset command" Padding="8,2" Click="ResetAction_Click" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ListView x:Name="ActionList" SelectionChanged="ActionList_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Category" Width="110" DisplayMemberBinding="{Binding Category}" />
+                                <GridViewColumn Header="Command" Width="300" DisplayMemberBinding="{Binding Name}" />
+                                <GridViewColumn Header="Shortcuts" Width="250" DisplayMemberBinding="{Binding Keys}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </TabItem>
+
+            <!-- ================================================================ Startup -->
+            <TabItem Header="Startup" x:Name="StartupTab">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="14">
+                        <TextBlock Text="When OneStopMidi starts, open:" FontWeight="SemiBold" />
+                        <RadioButton x:Name="StartNoneRadio" GroupName="StartMode" Content="Nothing" Checked="StartMode_Changed" />
+                        <RadioButton x:Name="StartLastRadio" GroupName="StartMode" Content="The last used playlist" Checked="StartMode_Changed" />
+                        <RadioButton x:Name="StartSpecificRadio" GroupName="StartMode" Content="A specific playlist or playlist file:" Checked="StartMode_Changed" />
+                        <DockPanel Margin="22,2,0,8" x:Name="SpecificPanel">
+                            <Button DockPanel.Dock="Right" Content="Browse…" Padding="10,2" Margin="6,0,0,0" Click="BrowseStartupPlaylist_Click" />
+                            <ComboBox x:Name="SpecificBox" IsEditable="True" />
+                        </DockPanel>
+
+                        <TextBlock Text="Song:" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <RadioButton x:Name="FirstSongRadio" GroupName="SongMode" Content="Select the first song" />
+                        <RadioButton x:Name="ResumeSongRadio" GroupName="SongMode" Content="Resume: select the song that was loaded last (if it is in the playlist)" />
+                        <CheckBox x:Name="AutoLoadBox" Content="Load the selected song into the player" Margin="0,10,0,4" Checked="AutoLoad_Changed" Unchecked="AutoLoad_Changed" />
+                        <CheckBox x:Name="AutoPlayBox" Content="Start playback" Margin="22,4,0,4" />
+                        <CheckBox x:Name="ForcePlaylistBox" Content="Turn Playlist mode on" Margin="0,10,0,4" />
+                        <CheckBox x:Name="ForceAutoBox" Content="Turn Auto on" />
+
+                        <TextBlock Style="{StaticResource Hint}" Margin="0,16,0,0">
+                            Command line overrides this page:<LineBreak />
+                            <Run FontFamily="Consolas">OneStopMidi.exe --playlist &lt;file|name&gt;</Run> opens that playlist;<LineBreak />
+                            <Run FontFamily="Consolas">OneStopMidi.exe song1.mid song2.mid</Run> puts the files in a temporary "Command line" list and plays the first one.
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

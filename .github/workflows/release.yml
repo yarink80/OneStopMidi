@@ -1,0 +1,77 @@
+# Builds the installer + portable package and publishes them as a GitHub Release.
+# Installed copies use these releases for Help -> Check for updates.
+#
+# Trigger: push a tag v<version> (e.g. v0.1.1) that equals <Version> in Directory.Build.props,
+# with docs/RELEASE-NOTES-<version>.md committed. Or run it manually with a version.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (x.y.z); must equal <Version> in Directory.Build.props'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: '1'
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  REPO_URL: https://github.com/${{ github.repository }}
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Resolve version
+        id: v
+        shell: pwsh
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          $v = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { $env:INPUT_VERSION.Trim() } else { $env:GITHUB_REF_NAME -replace '^v', '' }
+          if ($v -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?$') { throw "Not a SemVer version: $v" }
+          $declared = ([xml](Get-Content Directory.Build.props -Raw)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+          if ($declared -ne $v) { throw "Directory.Build.props has Version $declared but the release is $v." }
+          if (-not (Test-Path "docs/RELEASE-NOTES-$v.md")) { throw "docs/RELEASE-NOTES-$v.md is missing." }
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Build and test
+        run: |
+          dotnet build OneStopMidi.sln -c Release
+          dotnet test OneStopMidi.sln -c Release --no-build
+
+      - name: Package
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./tools/package.ps1 -Version ${{ steps.v.outputs.version }} -DownloadPrevious -RepoUrl $env:REPO_URL -Token $env:GITHUB_TOKEN
+
+      - name: Upload to GitHub Releases
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          $v = $env:VERSION
+          vpk upload github --repoUrl $env:REPO_URL --token $env:GITHUB_TOKEN --outputDir "artifacts/package/$v/vpk" `
+            --channel win --releaseName "OneStopMidi $v" --tag "v$v" --targetCommitish $env:GITHUB_SHA --merge --publish
+          if ($LASTEXITCODE -ne 0) { throw "vpk upload github failed ($LASTEXITCODE)" }
+          gh release upload "v$v" "dist/$v/OneStopMidi-Setup.exe" "dist/$v/OneStopMidi-Portable.zip" "dist/$v/SHA256SUMS.txt" --clobber --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw "gh release upload failed ($LASTEXITCODE)" }
+          gh release edit "v$v" --notes-file "docs/RELEASE-NOTES-$v.md" --repo $env:GITHUB_REPOSITORY

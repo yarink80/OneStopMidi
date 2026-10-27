@@ -1,0 +1,88 @@
+<UserControl x:Class="OneStopMidi.App.Controls.ChannelStrip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:OneStopMidi.App.Controls"
+             MinWidth="58" Margin="1,0">
+    <Border x:Name="Root" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1" CornerRadius="4" Padding="3">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Opacity" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasNotes}" Value="False">
+                        <Setter Property="Opacity" Value="0.55" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />  <!-- instrument -->
+                <RowDefinition Height="Auto" />  <!-- pan -->
+                <RowDefinition Height="Auto" />  <!-- reverb -->
+                <RowDefinition Height="Auto" />  <!-- chorus -->
+                <RowDefinition Height="*" />     <!-- volume -->
+                <RowDefinition Height="Auto" />  <!-- solo/mute -->
+                <RowDefinition Height="Auto" />  <!-- number -->
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" Style="{StaticResource FlatButton}" Margin="0,0,0,3" Padding="2,2" Height="38"
+                    Click="Instrument_Click" ToolTip="{Binding ToolTipText}">
+                <TextBlock Text="{Binding Label}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="10"
+                           TextAlignment="Center" MaxWidth="52" />
+            </Button>
+
+            <StackPanel Grid.Row="1" Margin="0,0,0,2">
+                <TextBlock HorizontalAlignment="Center" FontSize="10" Foreground="{StaticResource DimTextBrush}">
+                    <Run Text="Pan " /><Run Text="{Binding PanText, Mode=OneWay}" Foreground="{StaticResource TextBrush}" />
+                </TextBlock>
+                <Slider x:Name="PanSlider" Minimum="0" Maximum="127" SmallChange="1" LargeChange="8" Focusable="False"
+                        Value="{Binding Pan}" IsMoveToPointEnabled="True" TickPlacement="None"
+                        PreviewMouseLeftButtonDown="Pan_PreviewMouseLeftButtonDown"
+                        ToolTip="Pan (Shift+click = center)" />
+            </StackPanel>
+
+            <Grid Grid.Row="2" Margin="0,1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Rev" FontSize="10" Foreground="{StaticResource DimTextBrush}" VerticalAlignment="Center" Margin="0,0,3,0" />
+                <c:NumericDragBox Grid.Column="1" Value="{Binding Reverb}" DefaultValue="40" Foreground="{StaticResource TextBrush}" FontSize="11" />
+            </Grid>
+            <Grid Grid.Row="3" Margin="0,1,0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Cho" FontSize="10" Foreground="{StaticResource DimTextBrush}" VerticalAlignment="Center" Margin="0,0,3,0" />
+                <c:NumericDragBox Grid.Column="1" Value="{Binding Chorus}" DefaultValue="0" Foreground="{StaticResource TextBrush}" FontSize="11" />
+            </Grid>
+
+            <Grid Grid.Row="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Slider x:Name="VolumeSlider" Orientation="Vertical" Minimum="0" Maximum="127" SmallChange="1" LargeChange="8"
+                        Focusable="False" HorizontalAlignment="Center" MinHeight="60" IsMoveToPointEnabled="True"
+                        Value="{Binding Volume}"
+                        PreviewMouseLeftButtonDown="Volume_PreviewMouseLeftButtonDown"
+                        ValueChanged="Volume_ValueChanged"
+                        ToolTip="Volume (Shift+click = 100, Alt+drag = all channels)" />
+                <TextBlock Grid.Row="1" Text="{Binding Volume}" HorizontalAlignment="Center" FontSize="11"
+                           FontFamily="Consolas" Foreground="{StaticResource TextBrush}" />
+            </Grid>
+
+            <UniformGrid Grid.Row="5" Columns="2" Margin="0,3,0,0">
+                <ToggleButton Content="S" Style="{StaticResource LedToggle}" IsChecked="{Binding Soloed, Mode=OneWay}"
+                              Click="Solo_Click" ToolTip="Solo (Shift+click = add to the soloed channels)">
+                </ToggleButton>
+                <ToggleButton Content="M" Style="{StaticResource LedToggle}" IsChecked="{Binding Muted}" ToolTip="Mute" />
+            </UniformGrid>
+
+            <TextBlock Grid.Row="6" Text="{Binding Number}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="13"
+                       Margin="0,3,0,0" Foreground="{StaticResource AccentBrush}" />
+        </Grid>
+    </Border>
+</UserControl>

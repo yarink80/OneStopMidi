@@ -1,0 +1,359 @@
+<Window x:Class="OneStopMidi.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:OneStopMidi.App.Controls"
+        xmlns:vm="clr-namespace:OneStopMidi.App.ViewModels"
+        xmlns:in="clr-namespace:OneStopMidi.App.Input"
+        Title="OneStopMidi" Width="1280" Height="780" MinWidth="800" MinHeight="480"
+        Icon="/OneStopMidi;component/Assets/OneStopMidi.ico"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+        FontFamily="Segoe UI" FontSize="12.5"
+        AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop"
+        PreviewKeyDown="Window_PreviewKeyDown" Closing="Window_Closing" Loaded="Window_Loaded">
+
+    <DockPanel>
+        <!-- ============================================================ Menu -->
+        <Menu DockPanel.Dock="Top" Background="{StaticResource PanelBrush}" Foreground="{StaticResource TextBrush}"
+              ItemContainerStyle="{StaticResource TopMenuItemStyle}" Padding="2" x:Name="MainMenu">
+            <MenuItem Header="_File" SubmenuOpened="Menu_SubmenuOpened">
+                <MenuItem Header="_Open MIDI file…" Tag="{x:Static in:AppAction.OpenFile}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Save" Tag="{x:Static in:AppAction.SaveFile}" Click="ActionMenu_Click" x:Name="SaveMenuItem" />
+                <MenuItem Header="Save _as…" Tag="{x:Static in:AppAction.SaveFileAs}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Revert to saved" Tag="{x:Static in:AppAction.RevertToSaved}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="New _playlist…" Tag="{x:Static in:AppAction.NewPlaylist}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Import playlist(s)…" Tag="{x:Static in:AppAction.ImportPlaylists}" Click="ActionMenu_Click" />
+                <MenuItem Header="Import _old playlist type (*.jpl)…" Click="ImportOldPlaylists_Click" />
+                <MenuItem Header="_Export playlist…" Tag="{x:Static in:AppAction.ExportPlaylist}" Click="ActionMenu_Click" />
+                <MenuItem Header="Export a_ll playlists…" Tag="{x:Static in:AppAction.ExportAllPlaylists}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="Se_ttings…" Tag="{x:Static in:AppAction.OpenSettings}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="E_xit" Tag="{x:Static in:AppAction.ExitApp}" Click="ActionMenu_Click" InputGestureText="Alt+F4" />
+            </MenuItem>
+            <MenuItem Header="_Edit" SubmenuOpened="Menu_SubmenuOpened">
+                <MenuItem Header="_Undo" Tag="{x:Static in:AppAction.Undo}" Click="ActionMenu_Click" x:Name="UndoMenuItem" />
+                <MenuItem Header="_Redo" Tag="{x:Static in:AppAction.Redo}" Click="ActionMenu_Click" x:Name="RedoMenuItem" />
+                <Separator />
+                <MenuItem Header="Cu_t" Tag="{x:Static in:AppAction.Cut}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Copy" Tag="{x:Static in:AppAction.Copy}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Paste" Tag="{x:Static in:AppAction.Paste}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Delete range" Tag="{x:Static in:AppAction.DeleteRange}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Erase muted channels" Tag="{x:Static in:AppAction.EraseMutedChannels}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="Sequence _name…" Tag="{x:Static in:AppAction.SetSequenceName}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="Set _left locator" Tag="{x:Static in:AppAction.SetLeftLocator}" Click="ActionMenu_Click" />
+                <MenuItem Header="Reset left locator" Tag="{x:Static in:AppAction.ResetLeftLocator}" Click="ActionMenu_Click" />
+                <MenuItem Header="Set _right locator" Tag="{x:Static in:AppAction.SetRightLocator}" Click="ActionMenu_Click" />
+                <MenuItem Header="Reset right locator" Tag="{x:Static in:AppAction.ResetRightLocator}" Click="ActionMenu_Click" />
+                <MenuItem Header="L_oop" Tag="{x:Static in:AppAction.ToggleLoop}" Click="ActionMenu_Click" x:Name="LoopMenuItem" />
+            </MenuItem>
+            <MenuItem Header="_Search" SubmenuOpened="Menu_SubmenuOpened">
+                <MenuItem Header="_Search in playlists…" Tag="{x:Static in:AppAction.SearchPlaylists}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Find on computer" Tag="{x:Static in:AppAction.FindOnComputer}" Click="ActionMenu_Click" />
+            </MenuItem>
+            <MenuItem Header="_MIDI" SubmenuOpened="Menu_SubmenuOpened">
+                <MenuItem Header="_Start" Tag="{x:Static in:AppAction.Play}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Pause / continue" Tag="{x:Static in:AppAction.PauseContinue}" Click="ActionMenu_Click" />
+                <MenuItem Header="S_top" Tag="{x:Static in:AppAction.Stop}" Click="ActionMenu_Click" />
+                <MenuItem Header="Start / stop" Tag="{x:Static in:AppAction.StartStop}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="Previous bar" Tag="{x:Static in:AppAction.PreviousBar}" Click="ActionMenu_Click" />
+                <MenuItem Header="Next bar" Tag="{x:Static in:AppAction.NextBar}" Click="ActionMenu_Click" />
+                <MenuItem Header="Previous song" Tag="{x:Static in:AppAction.PreviousSong}" Click="ActionMenu_Click" />
+                <MenuItem Header="Next song" Tag="{x:Static in:AppAction.NextSong}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="Tempo +1%" Tag="{x:Static in:AppAction.TempoUp}" Click="ActionMenu_Click" />
+                <MenuItem Header="Tempo -1%" Tag="{x:Static in:AppAction.TempoDown}" Click="ActionMenu_Click" />
+                <MenuItem Header="Reset tempo change" Tag="{x:Static in:AppAction.TempoReset}" Click="ActionMenu_Click" />
+                <MenuItem Header="Transpose up" Tag="{x:Static in:AppAction.TransposeUp}" Click="ActionMenu_Click" />
+                <MenuItem Header="Transpose down" Tag="{x:Static in:AppAction.TransposeDown}" Click="ActionMenu_Click" />
+                <MenuItem Header="Reset transpose" Tag="{x:Static in:AppAction.TransposeReset}" Click="ActionMenu_Click" />
+                <Separator />
+                <MenuItem Header="MIDI _click" Tag="{x:Static in:AppAction.ToggleClick}" Click="ActionMenu_Click" x:Name="ClickMenuItem" />
+                <MenuItem Header="_Chase events" Tag="{x:Static in:AppAction.ToggleChaseEvents}" Click="ActionMenu_Click" x:Name="ChaseMenuItem" />
+                <MenuItem Header="Playlist _mode" Tag="{x:Static in:AppAction.TogglePlaylistMode}" Click="ActionMenu_Click" x:Name="PlaylistModeMenuItem" />
+                <MenuItem Header="_Auto (autoplay)" Tag="{x:Static in:AppAction.ToggleAutoplay}" Click="ActionMenu_Click" x:Name="AutoMenuItem" />
+                <MenuItem Header="_Lyrics view" Tag="{x:Static in:AppAction.ToggleLyrics}" Click="ActionMenu_Click" x:Name="LyricsMenuItem" />
+                <Separator />
+                <MenuItem Header="_Full volume" Tag="{x:Static in:AppAction.FullVolume}" Click="ActionMenu_Click" />
+                <MenuItem Header="_Reset devices" Tag="{x:Static in:AppAction.ResetDevices}" Click="ActionMenu_Click" />
+            </MenuItem>
+            <MenuItem Header="_Help" SubmenuOpened="Menu_SubmenuOpened">
+                <MenuItem Header="_Keyboard shortcuts" Tag="{x:Static in:AppAction.ShowKeyboardShortcuts}" Click="ActionMenu_Click" />
+                <MenuItem Header="Check for _updates…" Click="CheckForUpdates_Click" />
+                <MenuItem Header="OneStopMidi on _GitHub" Click="OpenGitHub_Click" />
+                <Separator />
+                <MenuItem Header="_About OneStopMidi" Tag="{x:Static in:AppAction.About}" Click="ActionMenu_Click" />
+            </MenuItem>
+        </Menu>
+
+        <!-- ============================================================ Status bar -->
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+            <DockPanel Margin="8,3">
+                <TextBlock x:Name="EngineText" DockPanel.Dock="Right" Foreground="{StaticResource DimTextBrush}" FontSize="11" />
+                <TextBlock x:Name="WarningsText" DockPanel.Dock="Right" Foreground="#F2C14E" FontSize="11" Margin="0,0,16,0" Cursor="Help" />
+                <TextBlock x:Name="StatusText" Foreground="{StaticResource DimTextBrush}" FontSize="11" TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+
+        <!-- ============================================================ Control area -->
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="6,4">
+            <StackPanel>
+                <!-- Cue slider -->
+                <Grid Margin="2,0,2,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="CueStartText" Style="{StaticResource CaptionText}" Text="Cue" Margin="0,0,8,0" />
+                    <Slider x:Name="CueSlider" Grid.Column="1" Minimum="0" Maximum="1" Focusable="False" IsMoveToPointEnabled="True"
+                            VerticalAlignment="Center" ToolTip="Song position (drag to move)"
+                            Thumb.DragStarted="CueSlider_DragStarted" Thumb.DragCompleted="CueSlider_DragCompleted"
+                            PreviewMouseLeftButtonUp="CueSlider_PreviewMouseLeftButtonUp" />
+                    <TextBlock x:Name="DurationText" Grid.Column="2" Style="{StaticResource CaptionText}" Text="0:00:00" Margin="8,0,0,0" />
+                </Grid>
+
+                <WrapPanel>
+                    <!-- Avatar badge (click = About) -->
+                    <Image Source="/OneStopMidi;component/Assets/elie-avatar.png" Width="58" Height="58" Margin="2,0,8,0" VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" Cursor="Hand" ToolTip="Elie — about OneStopMidi"
+                           MouseLeftButtonUp="AvatarBadge_MouseLeftButtonUp" />
+                    <!-- Playlist / Auto -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton x:Name="PlaylistToggle" Content="Playlist" Style="{StaticResource FlatButton}" Click="PlaylistToggle_Click"
+                                          ToolTip="Playlist mode: load the next song when the current one ends" />
+                            <ToggleButton x:Name="AutoToggle" Content="Auto" Style="{StaticResource FlatButton}" Click="AutoToggle_Click"
+                                          ToolTip="Auto: start playing when a song is loaded" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Time -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Time" />
+                            <TextBlock x:Name="TimeText" Style="{StaticResource ValueText}" Text="0:00:00" MinWidth="60" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Loop + locators -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton x:Name="LoopToggle" Style="{StaticResource IconButton}" Content="&#xE8EE;" Click="LoopToggle_Click" ToolTip="Loop between the locators" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="L" />
+                            <TextBox x:Name="LeftLocBox" Style="{StaticResource DarkTextBox}" Width="78" KeyDown="LocatorBox_KeyDown" LostKeyboardFocus="LocatorBox_LostFocus"
+                                     ToolTip="Left locator (bar beat tick). Type a position and press Enter." />
+                            <Button Content="Set" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.SetLeftLocator}" Click="ActionButton_Click" ToolTip="Set the left locator to the current position" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="R" />
+                            <TextBox x:Name="RightLocBox" Style="{StaticResource DarkTextBox}" Width="78" KeyDown="LocatorBox_KeyDown" LostKeyboardFocus="LocatorBox_LostFocus"
+                                     ToolTip="Right locator (bar beat tick). Type a position and press Enter." />
+                            <Button Content="Set" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.SetRightLocator}" Click="ActionButton_Click" ToolTip="Set the right locator to the current position" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Transport -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <RepeatButton Style="{StaticResource IconButton}" Content="&#xEB9E;" Tag="{x:Static in:AppAction.PreviousBar}" Click="ActionButton_Click" Delay="300" Interval="120" ToolTip="Rewind (previous bar)" />
+                            <ToggleButton x:Name="PauseButton" Style="{StaticResource IconButton}" Content="&#xE769;" Tag="{x:Static in:AppAction.PauseContinue}" Click="ActionButton_Click" ToolTip="Pause / continue" />
+                            <RepeatButton Style="{StaticResource IconButton}" Content="&#xEB9D;" Tag="{x:Static in:AppAction.NextBar}" Click="ActionButton_Click" Delay="300" Interval="120" ToolTip="Fast forward (next bar)" />
+                            <Button Style="{StaticResource IconButton}" Content="&#xE71A;" Tag="{x:Static in:AppAction.Stop}" Click="ActionButton_Click" ToolTip="Stop (twice: back to start)" />
+                            <ToggleButton x:Name="PlayButton" Style="{StaticResource IconButton}" Content="&#xE768;" Tag="{x:Static in:AppAction.Play}" Click="ActionButton_Click" ToolTip="Start" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Position -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Position" />
+                            <TextBox x:Name="PositionBox" Style="{StaticResource DarkTextBox}" Width="86" FontFamily="Consolas" FontSize="14"
+                                     KeyDown="PositionBox_KeyDown" ToolTip="Bar beat tick. Type a position and press Enter to go there." />
+                        </StackPanel>
+                    </Border>
+                    <!-- Tempo -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Tempo" />
+                            <TextBox x:Name="TempoBox" Style="{StaticResource DarkTextBox}" Width="62" FontFamily="Consolas" FontSize="14" KeyDown="TempoBox_KeyDown" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Change %" />
+                            <Button Content="−" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.TempoDown}" Click="ActionButton_Click" Padding="6,1" />
+                            <TextBox x:Name="TempoPercentBox" Style="{StaticResource DarkTextBox}" Width="44" FontFamily="Consolas" FontSize="14" KeyDown="TempoPercentBox_KeyDown"
+                                     ToolTip="Relative tempo change, -90 … +200 %" />
+                            <Button Content="+" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.TempoUp}" Click="ActionButton_Click" Padding="6,1" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Transpose -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Transpose" />
+                            <Button Content="−" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.TransposeDown}" Click="ActionButton_Click" Padding="6,1" />
+                            <TextBox x:Name="TransposeBox" Style="{StaticResource DarkTextBox}" Width="40" FontFamily="Consolas" FontSize="14" KeyDown="TransposeBox_KeyDown"
+                                     ToolTip="Semitones, -24 … +24 (drum channels excluded)" />
+                            <Button Content="+" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.TransposeUp}" Click="ActionButton_Click" Padding="6,1" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Signature -->
+                    <Border Style="{StaticResource GroupBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource CaptionText}" Text="Signature" />
+                            <TextBlock x:Name="SignatureText" Style="{StaticResource ValueText}" Text="4/4" MinWidth="34" />
+                        </StackPanel>
+                    </Border>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ============================================================ Main panes -->
+        <Grid x:Name="MainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="TreeColumn" Width="210" MinWidth="80" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition x:Name="ListColumn" Width="340" MinWidth="120" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" MinWidth="200" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Playlist tree -->
+            <DockPanel Background="{StaticResource PanelBrush}">
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource PaneHeader}" Text="PLAYLISTS" />
+                <TreeView x:Name="PlaylistTree" Background="{StaticResource PanelBrush}" BorderThickness="0" Foreground="{StaticResource TextBrush}"
+                          SelectedItemChanged="PlaylistTree_SelectedItemChanged" AllowDrop="True"
+                          DragOver="PlaylistTree_DragOver" Drop="PlaylistTree_Drop"
+                          PreviewMouseRightButtonDown="PlaylistTree_PreviewMouseRightButtonDown">
+                    <TreeView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3A5F9E" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#38404F" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White" />
+                    </TreeView.Resources>
+                    <TreeView.ContextMenu>
+                        <ContextMenu Opened="PlaylistContextMenu_Opened">
+                            <MenuItem Header="New playlist…" Tag="{x:Static in:AppAction.NewPlaylist}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Edit name…" Tag="{x:Static in:AppAction.RenamePlaylist}" Click="ActionMenu_Click" x:Name="RenamePlaylistMenuItem" />
+                            <MenuItem Header="Delete" Tag="{x:Static in:AppAction.DeletePlaylist}" Click="ActionMenu_Click" x:Name="DeletePlaylistMenuItem" />
+                            <MenuItem Header="Save as playlist…" Click="SaveTempAsPlaylist_Click" x:Name="SaveTempMenuItem" />
+                            <Separator />
+                            <MenuItem Header="Move up" Click="MovePlaylistUp_Click" />
+                            <MenuItem Header="Move down" Click="MovePlaylistDown_Click" />
+                            <Separator />
+                            <MenuItem Header="Export…" Tag="{x:Static in:AppAction.ExportPlaylist}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Export all…" Tag="{x:Static in:AppAction.ExportAllPlaylists}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Import playlist(s)…" Tag="{x:Static in:AppAction.ImportPlaylists}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Import old playlist type (*.jpl)…" Click="ImportOldPlaylists_Click" />
+                            <Separator />
+                            <MenuItem Header="Search in playlists…" Tag="{x:Static in:AppAction.SearchPlaylists}" Click="ActionMenu_Click" />
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                </TreeView>
+            </DockPanel>
+
+            <GridSplitter Grid.Column="1" Style="{StaticResource DarkGridSplitter}" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"
+                          DragCompleted="Splitter_DragCompleted" />
+
+            <!-- Song list -->
+            <DockPanel Grid.Column="2" Background="{StaticResource PanelBrush}">
+                <DockPanel DockPanel.Dock="Top">
+                    <TextBlock x:Name="ListCountText" DockPanel.Dock="Right" Style="{StaticResource PaneHeader}" />
+                    <TextBlock x:Name="ListHeaderText" Style="{StaticResource PaneHeader}" Text="SONGS" TextTrimming="CharacterEllipsis" />
+                </DockPanel>
+                <ListView x:Name="SongList" Background="{StaticResource PanelBrush}" BorderThickness="0" Foreground="{StaticResource TextBrush}"
+                          SelectionMode="Extended" ItemContainerStyle="{StaticResource SongListItem}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          MouseDoubleClick="SongList_MouseDoubleClick" AllowDrop="True"
+                          DragOver="SongList_DragOver" Drop="SongList_Drop"
+                          PreviewMouseLeftButtonDown="SongList_PreviewMouseLeftButtonDown" PreviewMouseMove="SongList_PreviewMouseMove">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:FileItem}">
+                            <Grid ToolTip="{Binding ToolTip}" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="10" VerticalAlignment="Center"
+                                           Foreground="{StaticResource AccentBrush}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                                    <Setter Property="FontWeight" Value="Bold" />
+                                                    <Setter Property="Foreground" Value="#9FCBFF" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsBad}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource ErrorTextBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ContextMenu>
+                        <ContextMenu Opened="SongContextMenu_Opened">
+                            <MenuItem Header="Load and play" Tag="{x:Static in:AppAction.LoadAndPlaySelectedSong}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Load" Tag="{x:Static in:AppAction.LoadSelectedSong}" Click="ActionMenu_Click" />
+                            <Separator />
+                            <MenuItem Header="Add file(s)…" Tag="{x:Static in:AppAction.AddFiles}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Add files from folder(s)…" Tag="{x:Static in:AppAction.AddFolder}" Click="ActionMenu_Click" />
+                            <Separator />
+                            <MenuItem Header="Cut file(s)" Click="CutFiles_Click" />
+                            <MenuItem Header="Copy file(s)" Click="CopyFiles_Click" />
+                            <MenuItem Header="Paste file(s)" Click="PasteFiles_Click" x:Name="PasteFilesMenuItem" />
+                            <MenuItem Header="Delete file(s) from list" Click="DeleteFiles_Click" />
+                            <Separator />
+                            <MenuItem Header="Sort alphabetically" Tag="{x:Static in:AppAction.SortList}" Click="ActionMenu_Click" />
+                            <MenuItem Header="Randomize list" Tag="{x:Static in:AppAction.RandomizeList}" Click="ActionMenu_Click" />
+                            <Separator />
+                            <MenuItem Header="Find on computer" Tag="{x:Static in:AppAction.FindOnComputer}" Click="ActionMenu_Click" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </DockPanel>
+
+            <GridSplitter Grid.Column="3" Style="{StaticResource DarkGridSplitter}" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"
+                          DragCompleted="Splitter_DragCompleted" />
+
+            <!-- Mixer / karaoke -->
+            <DockPanel Grid.Column="4" Background="{StaticResource BgBrush}">
+                <DockPanel DockPanel.Dock="Top" Background="{StaticResource PanelBrush}">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,2,4,2">
+                        <Button Content="Full volume" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.FullVolume}" Click="ActionButton_Click" />
+                        <Button Content="Reset" Style="{StaticResource FlatButton}" Tag="{x:Static in:AppAction.ResetDevices}" Click="ActionButton_Click" ToolTip="Reset MIDI devices" />
+                        <ToggleButton x:Name="KarToggle" Content="Kar" Style="{StaticResource FlatButton}" Click="KarToggle_Click" FontWeight="Bold"
+                                      ToolTip="Show lyrics (karaoke) instead of the mixer" />
+                    </StackPanel>
+                    <TextBlock x:Name="SongTitleText" Style="{StaticResource PaneHeader}" Text="MIXER" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                </DockPanel>
+                <Grid>
+                    <ScrollViewer x:Name="MixerScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Focusable="False">
+                        <ItemsControl x:Name="MixerItems" Margin="3" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="1" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <c:ChannelStrip />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <c:KaraokeView x:Name="Karaoke" Visibility="Collapsed" />
+                </Grid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

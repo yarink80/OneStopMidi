@@ -1,0 +1,25 @@
+<Project>
+  <!-- Shared build settings for every OneStopMidi project. -->
+  <PropertyGroup>
+    <OneStopMidiTfm>net8.0-windows</OneStopMidiTfm>
+    <OneStopMidiLogicTfm>net8.0</OneStopMidiLogicTfm>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <Platforms>x64</Platforms>
+    <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU' or '$(Platform)' == 'Any CPU'">x64</Platform>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <Product>OneStopMidi</Product>
+    <Company>OneStopMidi contributors</Company>
+    <Copyright>Copyright (c) OneStopMidi contributors</Copyright>
+    <Version>0.1.0</Version>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>

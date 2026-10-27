@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D9F96621-D1E3-40B1-84C6-B5E6DECE9462}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneStopMidi.Core", "src\OneStopMidi.Core\OneStopMidi.Core.csproj", "{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneStopMidi.App", "src\OneStopMidi.App\OneStopMidi.App.csproj", "{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7F478611-58F2-4E01-857F-829FFEBDE7AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneStopMidi.Core.Tests", "tests\OneStopMidi.Core.Tests\OneStopMidi.Core.Tests.csproj", "{35D060F2-102A-40B8-B43F-9C6A92F6569C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneStopMidi.App.Tests", "tests\OneStopMidi.App.Tests\OneStopMidi.App.Tests.csproj", "{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49}.Debug|Any CPU.Build.0 = Debug|x64
+		{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49}.Release|Any CPU.ActiveCfg = Release|x64
+		{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49}.Release|Any CPU.Build.0 = Release|x64
+		{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B}.Debug|Any CPU.Build.0 = Debug|x64
+		{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B}.Release|Any CPU.ActiveCfg = Release|x64
+		{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B}.Release|Any CPU.Build.0 = Release|x64
+		{35D060F2-102A-40B8-B43F-9C6A92F6569C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{35D060F2-102A-40B8-B43F-9C6A92F6569C}.Debug|Any CPU.Build.0 = Debug|x64
+		{35D060F2-102A-40B8-B43F-9C6A92F6569C}.Release|Any CPU.ActiveCfg = Release|x64
+		{35D060F2-102A-40B8-B43F-9C6A92F6569C}.Release|Any CPU.Build.0 = Release|x64
+		{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8}.Debug|Any CPU.Build.0 = Debug|x64
+		{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8}.Release|Any CPU.ActiveCfg = Release|x64
+		{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8}.Release|Any CPU.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E54F27A4-D7E7-41D1-A4B0-2E5DA49BDA49} = {D9F96621-D1E3-40B1-84C6-B5E6DECE9462}
+		{E68F0C03-D423-4543-AA48-B4A1C2EDCC4B} = {D9F96621-D1E3-40B1-84C6-B5E6DECE9462}
+		{35D060F2-102A-40B8-B43F-9C6A92F6569C} = {7F478611-58F2-4E01-857F-829FFEBDE7AB}
+		{24B7F87B-A95E-4E34-A1F5-98BDDC2326F8} = {7F478611-58F2-4E01-857F-829FFEBDE7AB}
+	EndGlobalSection
+EndGlobal
